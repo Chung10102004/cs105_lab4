@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fullscreen Koch Snowflake</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; 
+            background-color: #111; 
+        }
+   
+        #glCanvas {
+            display: block; 
+            width: 100vw;  
+            height: 100vh;  
+        }
+        /* Định vị UI chồng lên canvas */
+        #uiContainer {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-family: monospace;
+            background-color: rgba(0, 0, 0, 0.5); /* Nền bán trong suốt để dễ đọc */
+            padding: 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="glCanvas"></canvas>
+    <div id="uiContainer">
+        Depth: <input type="range" id="depthSlider" min="0" max="10" value="1" step="1">
+        <span id="depthValue">1</span><br>
+        <button id="animateButton">Animate</button><br>
+        <button id="resetButton">Reset</button>
+    </div>
+
+    <!-- Đảm bảo webgl-utils.js được tải trước -->
+    <script src="E:\UIT\cs105\Tieu_luan_fractal\webgl-utils.js"></script>
+    <script src="snow.js"></script>
+</body>
+</html>
