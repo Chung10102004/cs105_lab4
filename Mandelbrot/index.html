@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Fractal WebGL</title>
+        <meta charset="utf-8">
+        <style>
+            body {
+                margin: 0;
+                overflow: hidden; 
+                background-color: #000; 
+            }
+       
+            #glCanvas {
+                display: block; 
+                width: 100vw;  
+                height: 100vh;  
+            }
+            /* Định vị UI chồng lên canvas */
+            #uiContainer {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                color: white;
+                font-family: monospace;
+                background-color: rgba(0, 0, 0, 0.5); /* Nền bán trong suốt để dễ đọc */
+                padding: 5px;
+                border-radius: 3px;
+            }
+        </style>
+    </head
+<body>
+    <canvas id="glCanvas"></canvas>
+    <div id="uiContainer">
+        <label for="iterSlider">Max Iterations: <span id="iterValue">100</span></label>
+        <input type="range" id="iterSlider" min="10" max="1000" value="100" step="10">
+
+        <!-- Tạm thời chưa có Panning/Zooming UI, chỉ có animation màu -->
+        <button id="animateButton">Animate Color</button>
+        <button id="resetButton">Reset View</button> <!-- Reset cả màu và view -->
+    </div>
+
+    <script src="webgl-utils.js"></script>
+    <script src="Mandelbrot.js"></script>
+</body>
+</html>

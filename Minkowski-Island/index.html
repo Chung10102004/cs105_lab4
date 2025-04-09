@@ -4,22 +4,27 @@
     <title>Minkowski Island Fractal WebGL</title>
     <meta charset="utf-8">
     <style>
-        body { margin: 0; overflow: hidden; background-color: #111; }
-        #glCanvas { display: block; width: 100vw; height: 100vh; }
+        body {
+            margin: 0;
+            overflow: hidden; 
+            background-color: #111; 
+        }
+   
+        #glCanvas {
+            display: block; 
+            width: 100vw;  
+            height: 100vh;  
+        }
+        /* Định vị UI chồng lên canvas */
         #uiContainer {
             position: absolute;
             top: 10px;
             left: 10px;
             color: white;
             font-family: monospace;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.5); /* Nền bán trong suốt để dễ đọc */
             padding: 5px;
             border-radius: 3px;
-            z-index: 1; /* Đảm bảo UI nằm trên canvas */
-        }
-        #uiContainer label, #uiContainer span, #uiContainer button {
-            display: inline-block; /* Hoặc block tùy layout mong muốn */
-            margin-bottom: 5px;
         }
     </style>
 </head>

@@ -180,7 +180,7 @@ function main() {
     let then = 0;
     let rotationAngle = 0;
 
-    // --- Hàm Render Loop ---
+
     function render(now) {
         now *= 0.001; // convert to seconds
         const deltaTime = now - then;
@@ -210,75 +210,71 @@ function main() {
         // Đảm bảo nút bấm hiển thị đúng trạng thái
         if (animateButton) animateButton.textContent = "Animate";
     }
-        // --- Hàm vẽ chính ---
-        function drawScene(colorR, colorG, colorB, currentRotation) {
-            if (webglUtils.resizeCanvasToDisplaySize(gl.canvas)) {
-                gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-            }
-    
-            gl.clearColor(0.1, 0.1, 0.15, 1.0);
-            gl.clear(gl.COLOR_BUFFER_BIT);
-    
-            gl.useProgram(program);
-    
-            // --- Bindings & Attributes ---
-            if (vao) {
-                gl.bindVertexArray(vao);
-            } else {
-                gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-                gl.enableVertexAttribArray(positionAttributeLocation);
-                // Đảm bảo các biến size, type, normalize, stride, offset có thể truy cập
-                gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, offset);
-            }
-    
-            // --- Uniforms ---
-            gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
-            gl.uniform4f(colorUniformLocation, colorR, colorG, colorB, 1.0);
-    
-            // ====> SỬA LẠI ĐOẠN NÀY ĐỂ THÊM TRANSLATION <====
-            // Transformation Matrix (Rotate first, then translate)
-            const moveOriginX = gl.canvas.width / 2;  // Tính toán lại vị trí giữa màn hình
-            const moveOriginY = gl.canvas.height / 2; // Tính toán lại vị trí giữa màn hình
-    
-            let matrix = m3.identity(); // Bắt đầu với ma trận đơn vị
-    
-            // 1. Áp dụng phép quay quanh gốc (0,0) TRƯỚC
-            matrix = m3.rotate(matrix, currentRotation);
-    
-            // 2. Áp dụng phép dịch chuyển đến tâm màn hình SAU
-            matrix = m3.translate(matrix, moveOriginX, moveOriginY);
-    
-            // Gửi ma trận cuối cùng (Translate * Rotate * Identity) đến shader
-            gl.uniformMatrix3fv(transformUniformLocation, false, matrix);
-            // ====> KẾT THÚC SỬA ĐỔI <====
-    
-            // --- Vẽ ---
-            if (numVertices > 0) {
-                gl.drawArrays(gl.LINE_LOOP, 0, numVertices);
-            }
-    
-            // --- Cleanup ---
-            if (vao) {
-                gl.bindVertexArray(null);
-            }
-        }
-    // --- Hàm cập nhật hình học ---
+ // --- Hàm vẽ chính ---
+function drawScene(colorR, colorG, colorB, currentRotation) {
+    if (webglUtils.resizeCanvasToDisplaySize(gl.canvas)) {
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        // In ra để xác nhận resize (tùy chọn)
+        // console.log("Resized - Viewport:", gl.canvas.width, gl.canvas.height);
+    }
+
+    gl.clearColor(0.1, 0.1, 0.15, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    gl.useProgram(program);
+
+    // --- Bindings & Attributes ---
+    if (vao) {
+        gl.bindVertexArray(vao);
+    } else {
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.enableVertexAttribArray(positionAttributeLocation);
+        // Đảm bảo các biến size, type, normalize, stride, offset có thể truy cập
+        gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, offset);
+    }
+
+    // --- Uniforms ---
+    gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
+    gl.uniform4f(colorUniformLocation, colorR, colorG, colorB, 1.0);
+
+    const moveOriginX = gl.canvas.width / 2;
+    const moveOriginY = gl.canvas.height / 2;
+
+    // === THAY ĐỔI TÍNH TOÁN MA TRẬN Ở ĐÂY ===
+    // Tạo ma trận dịch chuyển đến tâm canvas
+    const translationMatrix = m3.translation(moveOriginX, moveOriginY);
+    // Tạo ma trận quay quanh gốc (0,0)
+    const rotationMatrix = m3.rotation(currentRotation);
+
+    // Áp dụng phép biến đổi giống code Koch: Translate * Rotate
+    // Điều này có nghĩa là: Quay các đỉnh quanh (0,0) TRƯỚC,
+    // sau đó dịch chuyển kết quả đã quay đến tâm canvas.
+    let matrix = m3.multiply(translationMatrix, rotationMatrix);
+    // ========================================
+
+    // Gửi ma trận cuối cùng đến shader
+    gl.uniformMatrix3fv(transformUniformLocation, false, matrix);
+
+    // --- Vẽ ---
+    if (numVertices > 0) {
+        gl.drawArrays(gl.LINE_LOOP, 0, numVertices);
+    }
+    // --- Cleanup ---
+    if (vao) {
+        gl.bindVertexArray(null);
+    }
+}
+//  --- Hàm cập nhật hình học ---
     function updateFractal() {
         // console.time(`generate vertices depth ${recursionDepth}`); // Bỏ comment nếu cần đo
         try {
              vertices = generateMinkowskiIslandVertices(center, islandSize, recursionDepth);
              numVertices = vertices.length / 2;
-             // console.timeEnd(`generate vertices depth ${recursionDepth}`);
-             // console.log(`Generated ${numVertices} vertices.`);
-
-             // Nạp dữ liệu mới vào buffer
              gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
              gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
              gl.bindBuffer(gl.ARRAY_BUFFER, null); // Unbind sau khi nạp xong
 
-             // Vẽ lại ngay lập tức với trạng thái tĩnh nếu không đang animation
              if (!isAnimating) {
-                  // Sử dụng góc quay hiện tại để tránh hình bị "nhảy" về 0 độ khi slider thay đổi
                  drawScene(1.0, 1.0, 1.0, rotationAngle);
              }
         } catch (error) {
