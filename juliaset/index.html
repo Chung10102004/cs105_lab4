@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Julia Set - WebGL</title> <!-- Đổi title cho phù hợp -->
+    <meta charset="utf-8">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            display: flex; /* Giúp căn giữa canvas nếu cần */
+            justify-content: center;
+            align-items: center;
+        }
+
+        #glCanvas {
+            display: block;
+            /* Width/Height nên được set bằng JavaScript hoặc để 100% */
+             width: 100vw;
+             height: 100vh;
+        }
+
+        #uiContainer {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-family: 'Courier New', Courier, monospace; /* Đổi font để rõ hơn */
+            font-size: 12px; /* Kích thước font nhỏ hơn */
+            background-color: rgba(0, 0, 0, 0.6); /* Tăng độ mờ nền UI */
+            padding: 10px; /* Tăng padding */
+            border-radius: 5px; /* Bo góc nhiều hơn */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Thêm viền mờ */
+            max-width: 300px; /* Giới hạn chiều rộng UI */
+        }
+
+        #uiContainer label,
+        #uiContainer input[type="range"],
+        #uiContainer button {
+            display: block; /* Mỗi thành phần trên một dòng */
+            margin-bottom: 8px; /* Tăng khoảng cách giữa các dòng */
+            width: 100%; /* Chiếm toàn bộ chiều rộng của container */
+            box-sizing: border-box; /* Tính cả padding/border vào width */
+        }
+         #uiContainer label {
+            margin-bottom: 2px; /* Giảm khoảng cách giữa label và slider */
+        }
+
+        #uiContainer input[type="range"] {
+            cursor: pointer;
+        }
+
+        #uiContainer button {
+            padding: 5px;
+            cursor: pointer;
+            background-color: #444;
+            color: white;
+            border: 1px solid #666;
+            border-radius: 3px;
+        }
+        #uiContainer button:hover {
+             background-color: #555;
+        }
+        #uiContainer span {
+            font-weight: bold; /* Làm nổi bật giá trị */
+            color: #a0ffa0; /* Màu xanh lá cho giá trị */
+            min-width: 40px; /* Đảm bảo đủ chỗ cho giá trị */
+            display: inline-block; 
+        }
+
+    </style>
+</head>
+<body>
+    <canvas id="glCanvas"></canvas>
+
+    <div id="uiContainer">
+        <div> <!-- Iterations Control -->
+             <label for="iterSlider">Max Iterations: <span id="iterValue">100</span></label>
+             <input type="range" id="iterSlider" min="10" max="1000" value="100" step="10">
+        </div>
+
+        <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 10px 0;"> <!-- Đường phân cách -->
+
+        <div> <!-- Julia C Real Part Control -->
+            <label for="juliaCRealSlider">Julia C (Real): <span id="juliaCRealValue">-0.800</span></label>
+            <input type="range" id="juliaCRealSlider" min="-2.0" max="2.0" value="-0.8" step="0.001">
+        </div>
+
+        <div> <!-- Julia C Imaginary Part Control -->
+            <label for="juliaCImagSlider">Julia C (Imag): <span id="juliaCImagValue">0.156</span></label>
+            <input type="range" id="juliaCImagSlider" min="-2.0" max="2.0" value="0.156" step="0.001">
+        </div>
+
+         <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 10px 0;"> <!-- Đường phân cách -->
+
+        <div> <!-- Action Buttons -->
+            <button id="animateButton">Animate Color</button>
+            <button id="resetButton">Reset View & Params</button> <!-- Sửa tên nút Reset -->
+        </div>
+    </div>
+    <script src="webgl-utils.js"></script>
+    <script src="juliaset.js"></script>
+</body>
+</html>

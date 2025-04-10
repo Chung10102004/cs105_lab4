@@ -186,9 +186,8 @@ function main() {
     iterSlider.addEventListener("input", () => {
         maxIterations = parseInt(iterSlider.value);
         iterValue.textContent = maxIterations;
-        // Vẽ lại ngay lập tức khi slider thay đổi (nếu không đang animate)
         if (!isAnimating) {
-             startTime = performance.now(); // Reset time để màu bắt đầu lại
+             startTime = performance.now();
              drawScene(0);
         }
     });
@@ -201,7 +200,6 @@ function main() {
             animationFrameId = requestAnimationFrame(render);
         } else {
             stopAnimation();
-             // Vẽ lại frame cuối khi dừng, với time=0 để màu tĩnh
              drawScene(0);
         }
     });
